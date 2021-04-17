@@ -3,3 +3,6 @@
 
 # release binary for GAE
 gae/wasmaas
+
+# vscode
+.vscode
