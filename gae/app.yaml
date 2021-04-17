@@ -1,2 +1,33 @@
 runtime: custom
 env: flex
+service: default
+resources:
+  cpu: 1
+  memory_gb: 0.6
+  disk_size_gb: 10
+liveness_check:
+  path: "/0/liveness/index.html"
+  check_interval_sec: 30
+  timeout_sec: 4
+  failure_threshold: 2
+  success_threshold: 2
+  initial_delay_sec: 300
+readiness_check:
+  path: "/0/readiness/index.html"
+  check_interval_sec: 5
+  timeout_sec: 4
+  failure_threshold: 2
+  success_threshold: 2
+  app_start_timeout_sec: 300
+#automatic_scaling:
+#  min_num_instances: 1
+#  max_num_instances: 1
+#  cool_down_period_sec: 120
+#  cpu_utilization:
+#    target_utilization: 0.6
+#  target_concurrent_requests: 100
+manual_scaling:
+  instances: 1
+env_variables:
+  APP_HOST: "0.0.0.0"
+  APP_PORT: "8080"
