@@ -5,3 +5,10 @@ services:
     build: .
     ports:
       - 8080:8080
+    volumes:
+      - cargo:/home/rust/.cargo
+      - target:/home/rust/src/target
+
+volumes:
+  cargo: {}
+  target: {}
