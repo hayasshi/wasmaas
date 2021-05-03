@@ -38,9 +38,11 @@ cargo install cargo-wasi
 #### Build WASM(WASI)
 
 ```
+cargo build --target wasm32-wasi --release -p double
 cargo build --target wasm32-wasi --release -p greet
 
 # If you have cargo-wasi installed, you can also do the following
+cargo wasi build --release -p double
 cargo wasi build --release -p greet
 ```
 
