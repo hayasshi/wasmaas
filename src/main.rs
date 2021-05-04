@@ -1,14 +1,19 @@
 use std::time::SystemTime;
 
-use actix_web::{
-    get,
-    web::{self},
-    App, HttpServer, Responder,
-};
+use actix_web::{get, App, HttpRequest, HttpServer, Responder};
 use wasmtime::*;
 
+#[get("/status")]
+async fn status(req: HttpRequest) -> impl Responder {
+    println!("[INFO] /status: Request from {:?}", req.peer_addr());
+    "OK"
+}
+
 #[get("/double/{num}")]
-async fn double(web::Path(num): web::Path<i32>) -> impl Responder {
+async fn double(req: HttpRequest) -> impl Responder {
+    println!("[INFO] /double/_num: Request from {:?}", req.peer_addr());
+    let num: i32 = req.match_info().get("num").unwrap().parse().unwrap();
+
     println!("--- start with num={}", num);
     let start = SystemTime::now();
 
@@ -51,7 +56,10 @@ async fn double(web::Path(num): web::Path<i32>) -> impl Responder {
 /// note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
 /// ```
 #[get("/greet/{name}")]
-async fn greet(web::Path(name): web::Path<String>) -> impl Responder {
+async fn greet(req: HttpRequest) -> impl Responder {
+    println!("[INFO] /greet/_name: Request from {:?}", req.peer_addr());
+    let name: String = req.match_info().get("name").unwrap().to_string();
+
     let store = Store::default();
 
     let module = Module::from_file(store.engine(), "greet.wasm").unwrap(); // occurred error here
@@ -69,7 +77,7 @@ async fn greet(web::Path(name): web::Path<String>) -> impl Responder {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    HttpServer::new(|| App::new().service(double).service(greet))
+    HttpServer::new(|| App::new().service(status).service(double).service(greet))
         .bind("0.0.0.0:8080")?
         .run()
         .await

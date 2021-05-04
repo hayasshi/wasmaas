@@ -6,7 +6,7 @@ SCRIPT_DIR=$(cd $(dirname $0); pwd)
 PROJECT_DIR=$(cd $SCRIPT_DIR/../; pwd)
 CACHE_DIR="$PROJECT_DIR/.build-cache/gae"
 
-BUILD_IMAGE="ekidd/rust-musl-builder:1.50.0"
+BUILD_IMAGE="ekidd/rust-musl-builder:1.51.0"
 BUILD_CMD="cargo build --release"
 
 docker run --rm -it \
@@ -17,3 +17,5 @@ docker run --rm -it \
   $BUILD_IMAGE $BUILD_CMD
 
 cp "$CACHE_DIR/target/x86_64-unknown-linux-musl/release/wasmaas" $SCRIPT_DIR
+cp "$PROJECT_DIR/double.wasm" $SCRIPT_DIR
+cp "$PROJECT_DIR/greet.wasm" $SCRIPT_DIR
