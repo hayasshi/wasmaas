@@ -6,14 +6,14 @@ resources:
   memory_gb: 0.6
   disk_size_gb: 10
 liveness_check:
-  path: "/0/liveness/index.html"
+  path: "/status"
   check_interval_sec: 30
   timeout_sec: 4
   failure_threshold: 2
   success_threshold: 2
   initial_delay_sec: 300
 readiness_check:
-  path: "/0/readiness/index.html"
+  path: "/status"
   check_interval_sec: 5
   timeout_sec: 4
   failure_threshold: 2

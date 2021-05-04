@@ -3,6 +3,8 @@
 
 # release binary for GAE
 gae/wasmaas
+gae/double.wasm
+gae/greet.wasm
 
 # vscode
 .vscode
