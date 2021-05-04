@@ -2,6 +2,7 @@ use std::time::SystemTime;
 
 use actix_web::{get, App, HttpRequest, HttpServer, Responder};
 use wasmtime::*;
+use wasmtime_wasi::*;
 
 #[get("/status")]
 async fn status(req: HttpRequest) -> impl Responder {
@@ -72,6 +73,30 @@ async fn greet(req: HttpRequest) -> impl Responder {
     match result {
         None => String::from("Missing WASM called."),
         Some(eref) => format!("{:?}", eref.data()),
+    }
+}
+
+#[get("/wasi/{name}")]
+async fn wasi(req: HttpRequest) -> impl Responder {
+    println!("[INFO] /wasi/_name: Request from {:?}", req.peer_addr());
+
+    let store = Store::default();
+    let mut linker = Linker::new(&store);
+
+    // let wasiCtx = WasiCtx::builder(
+    //     RefCell::new(Box::new(RngCore::new())),
+    //     WasiClocks::new(),
+    //     Box::new(WasiSched::new()),
+    //     Rc::new(RefCell::new(Table::new(&store, TableType::new(ValType::I32, 1), 1)))
+    // );
+    let wasi = Wasi::new(&store, WasiCtxBuilder::new().inherit_stdio().build().unwrap());
+    wasi.add_to_linker(&mut linker).unwrap();
+
+    let module = Module::from_file(store.engine(), "foo.wasm").unwrap();
+    let instance = linker.instantiate(&module).unwrap();
+    match instance.get_func("").unwrap().call(&[]) {
+        Ok(_) => String::from("OK"),
+        Err(e) => e.to_string(),
     }
 }
 
